@@ -958,9 +958,53 @@ section { padding: 96px 0; }
 }
 
 .flow-connector.deferred-conn { color: #F59E0B; }
+
+/* ── SIDE NAV (desktop gutter only) ── */
+.side-nav {
+  display: none;
+}
+@media (min-width: 1400px) {
+  .side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    left: calc((100vw - 1040px) / 2 - 168px);
+    width: 140px;
+    z-index: 200;
+  }
+  .side-nav a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    padding: 4px 0;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+  .side-nav a:hover,
+  .side-nav a.active {
+    color: var(--color-text-primary);
+  }
+  .side-nav a.active {
+    font-weight: 600;
+  }
+}
 </style>
 </head>
 <body>
+
+<!-- ── SIDE NAV (desktop gutter) ── -->
+<nav class="side-nav" id="side-nav">
+  <a href="#overview">Overview</a>
+  <a href="#problem">Problem</a>
+  <a href="#system">System</a>
+  <a href="#design">Design</a>
+  <a href="#process">Process</a>
+  <a href="#results">Results</a>
+</nav>
 
 <!-- ── NAVBAR ── -->
 <nav class="navbar">
@@ -1673,6 +1717,26 @@ document.querySelectorAll('.stage-tab').forEach(tab => {
 });
 
 renderStage(0);
+</script>
+
+<script>
+(function() {
+  const sections = ['overview','problem','system','design','process','results'];
+  const links = document.querySelectorAll('.side-nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector('.side-nav a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+})();
 </script>
 
 </body>
